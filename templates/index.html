@@ -1,0 +1,401 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Boston Assessor's Office — Property Valuation</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --ink: #1C2321;
+    --ink-soft: #262F2C;
+    --paper: #F1EAD8;
+    --paper-line: #D9CFB4;
+    --cream-text: #EDE6D6;
+    --cream-text-dim: #A9A395;
+    --brass: #A8783C;
+    --brass-bright: #C6924F;
+    --brick: #8B3A2B;
+    --sage: #5C6F64;
+  }
+
+  *{box-sizing:border-box;}
+
+  body{
+    margin:0;
+    background:var(--ink);
+    color:var(--cream-text);
+    font-family:'IBM Plex Mono', monospace;
+    line-height:1.5;
+  }
+
+  h1,h2,h3{
+    font-family:'Fraunces', serif;
+    font-weight:500;
+    margin:0;
+  }
+
+  /* ---------- Header ---------- */
+  header{
+    padding:56px 48px 40px;
+    border-bottom:1px solid #33403B;
+    position:relative;
+  }
+  header::before{
+    content:"";
+    position:absolute;
+    left:48px; right:48px; top:0;
+    height:1px;
+    background:repeating-linear-gradient(90deg, var(--sage) 0 6px, transparent 6px 12px);
+    opacity:.5;
+  }
+  .header-inner{
+    max-width:1040px;
+    margin:0 auto;
+    display:flex;
+    justify-content:space-between;
+    align-items:flex-end;
+    flex-wrap:wrap;
+    gap:16px;
+  }
+  header h1{
+    font-size:clamp(28px, 4vw, 42px);
+    color:var(--cream-text);
+    letter-spacing:.2px;
+  }
+  header p{
+    max-width:440px;
+    color:var(--cream-text-dim);
+    font-size:14px;
+    margin-top:10px;
+  }
+  .file-no{
+    font-size:12px;
+    color:var(--brass-bright);
+    text-align:right;
+    line-height:1.7;
+  }
+
+  /* ---------- Layout ---------- */
+  main{
+    max-width:1040px;
+    margin:0 auto;
+    padding:48px;
+    display:grid;
+    grid-template-columns:1.35fr 1fr;
+    gap:36px;
+    align-items:start;
+  }
+  @media (max-width:820px){
+    main{grid-template-columns:1fr; padding:32px 24px;}
+    header{padding:40px 24px 32px;}
+  }
+
+  /* ---------- Ledger form ---------- */
+  form{
+    background:var(--paper);
+    color:var(--ink);
+    border-radius:2px;
+    padding:36px 36px 30px;
+    box-shadow:0 24px 60px -30px rgba(0,0,0,.6);
+  }
+
+  .group{
+    margin-bottom:28px;
+  }
+  .group:last-of-type{margin-bottom:8px;}
+
+  .group-title{
+    font-family:'Fraunces', serif;
+    font-size:17px;
+    color:var(--brick);
+    display:flex;
+    align-items:baseline;
+    gap:10px;
+    margin-bottom:4px;
+  }
+  .group-title span.count{
+    font-family:'IBM Plex Mono', monospace;
+    font-size:11px;
+    color:var(--sage);
+  }
+  .group-note{
+    font-size:12px;
+    color:#6b6455;
+    margin-bottom:14px;
+  }
+
+  .field-grid{
+    display:grid;
+    grid-template-columns:repeat(auto-fit, minmax(150px, 1fr));
+    gap:14px 18px;
+  }
+
+  .field{
+    display:flex;
+    flex-direction:column;
+    gap:6px;
+    border-bottom:1px solid var(--paper-line);
+    padding-bottom:8px;
+  }
+
+  .field label{
+    font-size:11px;
+    text-transform:uppercase;
+    letter-spacing:.5px;
+    color:var(--sage);
+    display:flex;
+    justify-content:space-between;
+  }
+  .field label .unit{
+    text-transform:none;
+    letter-spacing:0;
+    color:#9a917c;
+  }
+
+  .field input{
+    background:transparent;
+    border:none;
+    font-family:'IBM Plex Mono', monospace;
+    font-size:16px;
+    color:var(--ink);
+    padding:2px 0;
+    outline:none;
+  }
+  .field input::placeholder{color:#b8ae95;}
+  .field:focus-within{border-bottom-color:var(--brick);}
+  .field:focus-within label{color:var(--brick);}
+
+  .submit-row{
+    margin-top:26px;
+    display:flex;
+    align-items:center;
+    gap:16px;
+  }
+  button{
+    background:var(--brick);
+    color:var(--paper);
+    border:none;
+    font-family:'Fraunces', serif;
+    font-size:16px;
+    padding:13px 28px;
+    border-radius:1px;
+    cursor:pointer;
+    transition:background .15s ease;
+  }
+  button:hover{background:#732f22;}
+  .submit-hint{
+    font-size:11px;
+    color:#8a8271;
+  }
+
+  /* ---------- Valuation panel ---------- */
+  .valuation{
+    position:sticky;
+    top:36px;
+    border:1px solid #33403B;
+    padding:32px 28px;
+    background:var(--ink-soft);
+  }
+  .valuation .stamp-label{
+    font-size:11px;
+    color:var(--sage);
+    letter-spacing:.5px;
+  }
+  .valuation h2{
+    font-size:20px;
+    margin-top:6px;
+    color:var(--cream-text);
+  }
+
+  .value-display{
+    margin-top:26px;
+    padding-top:22px;
+    border-top:1px dashed #3D4A44;
+  }
+  .value-display .amount{
+    font-family:'Fraunces', serif;
+    font-size:clamp(34px, 5vw, 46px);
+    color:var(--brass-bright);
+    line-height:1;
+  }
+  .value-display .amount .cents{
+    font-size:20px;
+    color:var(--cream-text-dim);
+  }
+  .value-display .caption{
+    margin-top:10px;
+    font-size:12px;
+    color:var(--cream-text-dim);
+  }
+
+  .empty-state{
+    margin-top:26px;
+    padding-top:22px;
+    border-top:1px dashed #3D4A44;
+    font-size:13px;
+    color:var(--cream-text-dim);
+  }
+  .empty-state .glyph{
+    display:block;
+    font-family:'Fraunces', serif;
+    font-size:30px;
+    color:#3D4A44;
+    margin-bottom:10px;
+  }
+
+  .legend{
+    margin-top:28px;
+    display:flex;
+    flex-direction:column;
+    gap:8px;
+    font-size:11px;
+    color:var(--cream-text-dim);
+  }
+  .legend li{list-style:none; display:flex; gap:8px;}
+  .legend b{color:var(--brass);}
+
+  footer{
+    max-width:1040px;
+    margin:0 auto;
+    padding:0 48px 48px;
+    color:#5a655e;
+    font-size:11px;
+  }
+  @media (max-width:820px){ footer{padding:0 24px 40px;} }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="header-inner">
+    <div>
+      <h1>Boston Assessor's Office</h1>
+      <p>Enter a parcel's tract statistics below to generate an estimated median value, modeled on the 1970s Boston housing survey.</p>
+    </div>
+    <div class="file-no">
+      FORM 13-B<br>
+      TRACT VALUATION ESTIMATE
+    </div>
+  </div>
+</header>
+
+<main>
+  <form action="/predict" method="POST">
+
+    <div class="group">
+      <div class="group-title">Location &amp; Environment <span class="count">07</span></div>
+      <div class="group-note">Where the tract sits and what surrounds it.</div>
+      <div class="field-grid">
+        <div class="field">
+          <label>CRIM <span class="unit">per capita</span></label>
+          <input type="number" step="any" name="CRIM" placeholder="0.10" required>
+        </div>
+        <div class="field">
+          <label>ZN <span class="unit">% large lots</span></label>
+          <input type="number" step="any" name="ZN" placeholder="18.0" required>
+        </div>
+        <div class="field">
+          <label>INDUS <span class="unit">% industrial</span></label>
+          <input type="number" step="any" name="INDUS" placeholder="2.3" required>
+        </div>
+        <div class="field">
+          <label>CHAS <span class="unit">riverbound</span></label>
+          <input type="number" step="1" min="0" max="1" name="CHAS" placeholder="0 or 1" required>
+        </div>
+        <div class="field">
+          <label>NOX <span class="unit">ppm ×10</span></label>
+          <input type="number" step="any" name="NOX" placeholder="0.54" required>
+        </div>
+        <div class="field">
+          <label>DIS <span class="unit">to employ. hubs</span></label>
+          <input type="number" step="any" name="DIS" placeholder="4.1" required>
+        </div>
+        <div class="field">
+          <label>RAD <span class="unit">highway index</span></label>
+          <input type="number" step="any" name="RAD" placeholder="4" required>
+        </div>
+      </div>
+    </div>
+
+    <div class="group">
+      <div class="group-title">The Structure <span class="count">02</span></div>
+      <div class="group-note">Physical character of the dwelling itself.</div>
+      <div class="field-grid">
+        <div class="field">
+          <label>RM <span class="unit">rooms / dwelling</span></label>
+          <input type="number" step="any" name="RM" placeholder="6.3" required>
+        </div>
+        <div class="field">
+          <label>AGE <span class="unit">% pre-1940</span></label>
+          <input type="number" step="any" name="AGE" placeholder="65.2" required>
+        </div>
+      </div>
+    </div>
+
+    <div class="group">
+      <div class="group-title">Tax &amp; Civic Services <span class="count">03</span></div>
+      <div class="group-note">Municipal burden and school access.</div>
+      <div class="field-grid">
+        <div class="field">
+          <label>TAX <span class="unit">rate / $10k</span></label>
+          <input type="number" step="any" name="TAX" placeholder="296" required>
+        </div>
+        <div class="field">
+          <label>PTRATIO <span class="unit">pupil : teacher</span></label>
+          <input type="number" step="any" name="PTRATIO" placeholder="15.3" required>
+        </div>
+        <div class="field">
+          <label>B <span class="unit">demographic idx</span></label>
+          <input type="number" step="any" name="B" placeholder="396.9" required>
+        </div>
+      </div>
+    </div>
+
+    <div class="group">
+      <div class="group-title">Socioeconomic Standing <span class="count">01</span></div>
+      <div class="group-note">Share of the population in lower status occupations.</div>
+      <div class="field-grid">
+        <div class="field">
+          <label>LSTAT <span class="unit">% lower status</span></label>
+          <input type="number" step="any" name="LSTAT" placeholder="4.98" required>
+        </div>
+      </div>
+    </div>
+
+    <div class="submit-row">
+      <button type="submit">Assess value</button>
+      <span class="submit-hint">All thirteen fields are required to file this form.</span>
+    </div>
+  </form>
+
+  <aside class="valuation">
+    <div class="stamp-label">ESTIMATED MEDIAN VALUE</div>
+    <h2>Valuation Result</h2>
+
+    {% if new_data_pred %}
+    <div class="value-display">
+      <div class="amount">${{ "%.1f"|format(new_data_pred[0]) }}k</div>
+      <div class="caption">Predicted median value of owner-occupied homes in this tract, in thousands of 1970s dollars.</div>
+    </div>
+    {% else %}
+    <div class="empty-state">
+      <span class="glyph">§</span>
+      No filing on record yet. Complete the form to generate an estimate.
+    </div>
+    {% endif %}
+
+    <ul class="legend">
+      <li><b>CRIM–LSTAT</b> — tract-level statistics from the original 1970 census survey</li>
+      <li><b>Model</b> — trained regressor, features standardized before inference</li>
+    </ul>
+  </aside>
+</main>
+
+<footer>
+  Boston Housing Valuation Demo · figures are illustrative estimates, not real appraisals
+</footer>
+
+</body>
+</html>
